@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number Guess</title>
+    <style>
+        body {
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .containerGuss {
+            background-color: white;
+            padding: 20px 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            border-radius: 6px;
+        }
+
+        h1 {
+            color: #2c3e50;
+        }
+
+        .inputtext {
+            padding: 15px;
+            width: 60%;
+            margin-right: 10px;
+            font-size: 0.9rem;
+            border: 1px solid #333;
+            border-radius: 6px;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 10px;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+        }
+
+        .NewGame {
+            margin-top: 8px;
+        }
+
+        .feedBACK {
+            margin-top: 10px;
+            font-size: 1.1rem;
+            min-height: 20px;
+            font-family: 'Times New Roman', Times, serif;
+        }
+
+        .iskuday {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="containerGuss">
+        <h1>Number Guess</h1>
+        <p>Number between 1 until 100</p>
+        <input type="number" class="inputtext" placeholder="Enter number">
+        <button class="submit">Submit</button>
+        <button class="NewGame">New Game</button>
+        <div class="feedBACK"></div>
+        <div class="iskuday"></div>
+    </div>
+
+    <script>
+        let TargetNumber;
+        let attenb;
+        let MaxNumber = 5;
+
+        let iskudayid = document.querySelector(".iskuday");
+        let input = document.querySelector(".inputtext");
+        let feed = document.querySelector(".feedBACK");
+        let sub = document.querySelector(".submit");
+        let newgame = document.querySelector(".NewGame");
+
+        function init() {
+            TargetNumber = Math.floor(Math.random() * 100) + 1;
+            attenb = 0;
+            iskudayid.textContent = `iskudayid ${attenb}`;
+            input.value = "";
+            feed.textContent = "";
+            // sub.disabled = false;
+        }
+
+        function inputcheck() {
+            let inputnum = Number(input.value);
+
+            if (inputnum < 1 || inputnum > 100 || isNaN(inputnum)) {
+                feed.textContent = "soo gali 1 ilaa 100";
+                return;
+            }
+
+            attenb++;
+            iskudayid.textContent = `iskudayid ${attenb}`;
+             input.value = "";
+
+            if (inputnum === TargetNumber) {
+                feed.textContent = `waad qiyaastey ${TargetNumber}`;
+                 feed.style.color = "#3498db"; 
+                sub.disabled = true;
+            } else if (attenb >= MaxNumber) {
+                feed.textContent = "game waa dhamaaday";
+                feed.style.color = "red"; 
+                sub.disabled = true;
+            } 
+             if( inputnum < TargetNumber){
+                  feed.textContent = "waa ka yaryahay isku day markale";
+                  feed.style.color = "green";
+            }
+            else  {
+                  feed.textContent = "waa ka weenyahay isku day markale";
+                   feed.style.color = "green";
+            }
+        }
+        sub.addEventListener("click", inputcheck);
+        newgame.addEventListener("click", init);
+
+        init();
+    </script>
+</body>
+
+</html>
