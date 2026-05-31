@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hotels</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        line-height: 1.6;
+        color: #333;
+        overflow-x: hidden;
+      }
+      h1,
+      h2,
+      h3 {
+        margin: 0;
+       
+      }
+      img {
+        width: 100%;
+        border-radius: 8px;
+      }
+      button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+      header {
+        background: linear-gradient(
+            to bottom,
+            rgba(0, 0, 0, 0.7),
+            rgba(38, 4, 255, 0.5)
+          ),
+          url(https://images.pexels.com/photos/261102/pexels-photo-261102.jpeg);
+        background-size: cover;
+        height: 45vh;
+        color: white;
+        padding: 20px;
+      }
+      .navbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: nowrap;
+        cursor: pointer;
+      }
+      ul {
+        display: flex;
+        flex-wrap: wrap;
+        list-style: none;
+        padding: 0;
+      }
+      ul li {
+        margin: 0 15px;
+      }
+      ul li a{
+        color: white;
+        text-decoration: none;
+      }
+      ul li a:hover{
+        color: rgb(234, 18, 25);
+      }
+      .hero-content {
+        text-align: center;
+        margin-top: 50px;
+        
+      }
+      .hero-content p{
+      max-width: 700px;
+        margin: 0 auto;
+      }
+      .hero-content button {
+        margin-top: 30px;
+        background-color: blue;
+        color: white;
+      }
+      .facilities {
+        text-align: center;
+        padding: 50px 20px;
+      }
+
+      .facilities h2 {
+        font-size: 30px;
+        margin-bottom: 20px;
+      }
+
+      .facilities .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 15px;
+        text-align: center;
+
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .facilities .grid .card {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        background-color: rgb(241, 235, 235);
+        text-align: center;
+        padding: 20px;
+        border: 1px solid #333;
+      }
+     .popular-Hotels{
+      padding: 50px 20px;
+      width: 80%;
+      margin: 0 auto;
+     }
+     .popular-Hotels .hotels-card{
+      display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 15px;
+        text-align: center;
+        
+        max-width: 1200px;
+        margin: 0 auto;
+     }
+     .popular-Hotels .hotels-card .card{
+      background-color: aliceblue;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease-in;
+
+     }
+     .popular-Hotels .hotels-card .card:hover{
+      transform: scale(1.05)
+     }
+     .popular-Hotels .hotels-card .card .content{
+         text-align: center;
+         color: rgb(39, 39, 201);
+     }
+     .popular-Hotels h2{
+      margin-bottom: 30px;
+      text-align: center;
+     }
+     .price{
+      /* padding:50px ;
+      width: 80%;
+      margin: 0 auto; */
+      text-align: center;
+     }
+     .price .grid{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+     }
+     .price h2{
+      margin-bottom: 30px;
+     }
+     .plan{
+      background-color: rgb(246, 244, 242);
+      padding: 30px;
+      border-radius: 8px;
+     }
+     .plan button{
+      background-color: rgb(8, 24, 24);
+      color: white;
+     }
+     footer{
+      background-color:rgb(87, 87, 205) ;
+      padding: 10px;
+      text-align: center;
+      color: white;
+      margin-top: 25px;
+     }
+     .menu{
+      display: none;
+     }
+    
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav class="navbar">
+        <div class="logo">Hotels</div>
+        <button class="menu">&#9776;</button>
+        <div>
+          <ul>
+            <li><a href="#">home</a></li>
+            <li><a href="#">category</a></li>
+            <li><a href="#">blog</a></li>
+            <li><a href="#">contact</a></li>
+        </ul>
+        
+        </div>
+      </nav>
+      <div class="hero-content">
+        <h1>stay with us feel like home</h1>
+        <p>
+          Amet in ut ullamco aliquip. Labore mollit proident irure mollit nulla
+          fugiat ullamco elit proident eiusmod proident enim qui minim. Anim
+          consequat Lorem reprehenderit officia officia sit. Do mollit minim ut
+          do Lorem. Eiusmod ad qui adipisicing mollit fugiat deserunt.
+        </p>
+        <button>learn more</button>
+        <button>take to tools</button>
+      </div>
+    </header>
+
+    <section class="facilities">
+      <h2>our hotel facilities</h2>
+      <div class="grid">
+        <div class="card">
+          <div class="icon">🚆</div>
+          <div class="icon">WIFI</div>
+          <p>
+            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Atque
+            debitis amet non! sapiente ad, sit repellat repellendus?
+          </p>
+        </div>
+        <div class="card">
+          <div class="icon">📺</div>
+          <div class="icon">tv</div>
+          <p>
+            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Atque
+            debitis amet non! sapiente ad, sit repellat repellendus?
+          </p>
+        </div>
+        <div class="card">
+          <div class="icon">🍔</div>
+          <div class="icon">food</div>
+          <p>
+            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Atque
+            debitis amet non! sapiente ad, sit repellat repellendus?
+          </p>
+        </div>
+        <div class="card">
+          <div class="icon">🅿️</div>
+          <div class="icon">parking</div>
+          <p>
+            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Atque
+            debitis amet non! sapiente ad, sit repellat repellendus?
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="popular-Hotels">
+      <h2>popular hotels</h2>
+      <div class="hotels-card">
+        <div class="card">
+          <img
+            src="https://images.pexels.com/photos/6235436/pexels-photo-6235436.jpeg"
+            alt="hotel"
+          />
+          <div class="content">
+            <p>wifi break fast balcone</p>
+          </div>
+        </div>
+        <div class="card">
+          <img
+            src="https://images.pexels.com/photos/6235436/pexels-photo-6235436.jpeg"
+            alt="hotel"
+          />
+          <div class="content">
+            <p>wifi break fast balcone</p>
+          </div>
+        </div>
+        <div class="card">
+          <img
+            src="https://images.pexels.com/photos/6235436/pexels-photo-6235436.jpeg"
+            alt="hotel"
+          />
+          <div class="content">
+            <p>wifi break fast balcone</p>
+          </div>
+        </div>
+        <div class="card">
+          <img
+            src="https://images.pexels.com/photos/6235436/pexels-photo-6235436.jpeg"
+            alt="hotel"
+          />
+          <div class="content">
+            <p>wifi break fast balcone</p>
+          </div>
+        </div>
+        <div class="card">
+          <img
+            src="https://images.pexels.com/photos/164595/pexels-photo-164595.jpeg"
+            alt="hotel"
+          />
+          <div class="content">
+            <p>wifi break fast balcone</p>
+          </div>
+        </div>
+        <div class="card">
+          <img
+            src="https://images.pexels.com/photos/6235436/pexels-photo-6235436.jpeg"
+            alt="hotel"
+          />
+          <div class="content">
+            <p>wifi break fast balcone</p>
+          </div>
+        </div>
+        <div class="card">
+          <img
+            src="https://images.pexels.com/photos/164595/pexels-photo-164595.jpeg"
+            alt="hotel"
+          />
+          <div class="content">
+            <p>wifi break fast balcone</p>
+          </div>
+        </div>
+        <div class="card">
+          <img
+            src="https://images.pexels.com/photos/6235436/pexels-photo-6235436.jpeg"
+            alt="hotel"
+          />
+          <div class="content">
+            <p>wifi break fast balcone</p>
+          </div>
+        </div>
+        <div class="card">
+          <img
+            src="https://images.pexels.com/photos/6235436/pexels-photo-6235436.jpeg"
+            alt="hotel"
+          />
+          <div class="content">
+            <p>wifi break fast balcone</p>
+          </div>
+        </div>
+        <div class="card">
+          <img
+            src="https://images.pexels.com/photos/164595/pexels-photo-164595.jpeg"
+            alt="hotel"
+          />
+          <div class="content">
+            <p>wifi break fast balcone</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="price">
+      <h2>pricing plan</h2>
+      <div class="grid">
+        <div class="plan">
+          <h3>basic plan</h3>
+          <p>perfect for small stayes</p>
+          <p>$20/month</p>
+          <button>subscribe</button>
+        </div>
+        <div class="plan">
+          <h3>middle</h3>
+          <p>perfect for small stayes</p>
+          <p>$40/month</p>
+          <button>subscribe</button>
+        </div>
+        <div class="plan">
+          <h3>pro</h3>
+          <p>perfect for small stayes</p>
+          <p>$80/month</p>
+          <button>subscribe</button>
+        </div>
+      </div>
+    </section>
+    <footer>
+      <p>&copy;2025 hotels service</p>
+    </footer>
+  </body>
+</html>
