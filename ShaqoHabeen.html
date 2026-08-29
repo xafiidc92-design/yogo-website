@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Todo App</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #f5a7e8 0%, #a78bfa 50%, #60c6f5 100%); min-height: 100vh; padding: 30px 16px; }
+  h1 { text-align: center; color: #fff; font-size: 2.2rem; margin-bottom: 24px; text-shadow: 0 2px 8px #0003; letter-spacing: 1px; }
+  .card { background: #fff; border-radius: 20px; padding: 24px; max-width: 680px; margin: 0 auto 20px; box-shadow: 0 8px 32px #0002; transition: box-shadow .2s; }
+  .card.editing { box-shadow: 0 0 0 3px #a78bfa, 0 8px 32px #0002; }
+  .form-title { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; min-height: 20px; }
+  .form-title .badge-editing { display: none; }
+  .card.editing .badge-editing { display: inline-block; background: #ede9fe; color: #7c3aed; font-size: .75rem; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
+  .input-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .input-row input[type="text"] { flex: 1; min-width: 140px; padding: 10px 14px; border: 2px solid #e0d7f7; border-radius: 12px; font-size: 1rem; outline: none; transition: border .2s; }
+  .input-row input[type="text"]:focus { border-color: #a78bfa; }
+  .input-row input[type="date"], .input-row input[type="time"] { padding: 10px 10px; border: 2px solid #e0d7f7; border-radius: 12px; font-size: .9rem; outline: none; }
+  .input-row select { padding: 10px 10px; border: 2px solid #e0d7f7; border-radius: 12px; font-size: .9rem; outline: none; background: #fff; cursor: pointer; }
+  .btn-add { background: linear-gradient(90deg, #a78bfa, #f5a7e8); color: #fff; border: none; border-radius: 12px; padding: 10px 22px; font-size: 1rem; font-weight: 700; cursor: pointer; transition: opacity .2s, background .2s; }
+  .btn-add:hover { opacity: .85; }
+  .btn-add:disabled { opacity: .5; cursor: default; }
+  .btn-add.update-mode { background: linear-gradient(90deg, #059669, #34d399); }
+  .btn-cancel-edit { background: #f3f4f6; color: #6b7280; border: none; border-radius: 12px; padding: 10px 18px; font-size: .95rem; font-weight: 600; cursor: pointer; margin-left: 8px; display: none; }
+  .card.editing .btn-cancel-edit { display: inline-block; }
+  .filters { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 16px; }
+  .filter-btn { padding: 6px 16px; border-radius: 20px; border: 2px solid #e0d7f7; background: #fff; font-size: .85rem; cursor: pointer; transition: all .2s; font-weight: 600; color: #6b7280; }
+  .filter-btn.active { background: linear-gradient(90deg, #a78bfa, #60c6f5); color: #fff; border-color: transparent; }
+  .tasks { max-width: 680px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+  .task { background: #fff; border-radius: 16px; padding: 16px 18px; display: flex; align-items: center; gap: 12px; box-shadow: 0 4px 16px #0001; border-left: 5px solid #ccc; animation: fadeIn .25s; transition: opacity .2s, box-shadow .2s; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
+  .task.done { opacity: .55; }
+  .task.done .task-name { text-decoration: line-through; color: #9ca3af; }
+  .task.p-high { border-left-color: #f87171; }
+  .task.p-medium { border-left-color: #fbbf24; }
+  .task.p-low { border-left-color: #34d399; }
+  .task.being-edited { box-shadow: 0 0 0 2px #a78bfa; }
+  .task-check { width: 22px; height: 22px; accent-color: #a78bfa; cursor: pointer; flex-shrink: 0; }
+  .task-body { flex: 1; min-width: 0; }
+  .task-name { font-size: 1rem; font-weight: 600; color: #1f2937; word-break: break-word; }
+  .task-meta { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 5px; align-items: center; }
+  .badge { font-size: .72rem; font-weight: 700; border-radius: 20px; padding: 2px 10px; }
+  .badge-cat { background: #ede9fe; color: #7c3aed; }
+  .badge-high { background: #fee2e2; color: #ef4444; }
+  .badge-medium { background: #fef3c7; color: #d97706; }
+  .badge-low { background: #d1fae5; color: #059669; }
+  .badge-date { background: #e0f2fe; color: #0369a1; }
+  .badge-time { background: #fdf2f8; color: #be185d; }
+  .badge-overdue { background: #fee2e2; color: #dc2626; }
+  .badge-updated { background: #f3f4f6; color: #6b7280; }
+  .task-actions { display: flex; gap: 6px; flex-shrink: 0; }
+  .btn-icon { border: none; border-radius: 10px; width: 32px; height: 32px; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background .2s; }
+  .btn-del { background: #fee2e2; color: #ef4444; }
+  .btn-del:hover { background: #fecaca; }
+  .btn-edit { background: #ede9fe; color: #7c3aed; }
+  .btn-edit:hover { background: #ddd6fe; }
+  .empty { text-align: center; color: #fff; font-size: 1.1rem; padding: 30px; opacity: .8; }
+  .status { text-align: center; color: #fff; font-size: .85rem; opacity: .85; margin: -12px 0 16px; min-height: 1.2em; }
+  label.form-label { font-size: .8rem; color: #6b7280; font-weight: 600; display: block; margin-bottom: 3px; margin-top: 8px; }
+</style>
+</head>
+<body>
+<h1>My TO DO LIST</h1>
+<div class="status" id="status">Loading your tasks…</div>
+
+<div class="card" id="formCard">
+  <div class="form-title">
+    <span class="badge-editing">✏️ Editing task</span>
+  </div>
+  <div class="input-row">
+    <input type="text" id="taskInput" placeholder=" Ku Dar Shaqo Cusub" />
+  </div>
+  <div class="input-row" style="margin-top:10px;">
+    <div style="flex:1;min-width:120px;">
+      <label class="form-label">📅 Taarikh</label>
+      <input type="date" id="dateInput" style="width:100%;" />
+    </div>
+    <div style="flex:1;min-width:110px;">
+      <label class="form-label">⏰ Waqtiga</label>
+      <input type="time" id="timeInput" style="width:100%;" />
+    </div>
+    <div style="flex:1;min-width:110px;">
+      <label class="form-label">🔥 Heer</label>
+      <select id="priorityInput" style="width:100%;">
+        <option value="Bilaaw">Bilaaw</option>
+        <option value="Dhexdhexaad" selected>Dhexdhexaad</option>
+        <option value="Dhamaad">Dhamaad</option>
+      </select>
+    </div>
+    <div style="flex:1;min-width:110px;">
+      <label class="form-label">🏷️ Nooca</label>
+      <input type="text" id="catInput" placeholder="e.g. Work" style="width:100%;padding:9px 12px;border:2px solid #e0d7f7;border-radius:12px;font-size:.9rem;outline:none;" />
+    </div>
+  </div>
+  <div style="margin-top:14px;">
+    <button class="btn-add" id="submitBtn" onclick="handleSubmit()">Ku dar shaqo </button>
+    <button class="btn-cancel-edit" id="cancelEditBtn" onclick="cancelEdit()">Cancel</button>
+  </div>
+
+  <div class="filters" id="filters">
+   
+  </div>
+</div>
+
+<div class="tasks" id="taskList"></div>
+
+<script>
+  const STORAGE_KEY = 'tasks';
+  let tasks = [];
+  let filter = 'all';
+  let editingId = null; // id of task currently loaded into the form for updating
+  let ready = false;
+
+  function setStatus(msg, timeout) {
+    const el = document.getElementById('status');
+    el.textContent = msg || '';
+    if (timeout) setTimeout(() => { if (el.textContent === msg) el.textContent = ''; }, timeout);
+  }
+
+  async function loadTasks() {
+    try {
+      const result = await window.storage.get(STORAGE_KEY, false);
+      tasks = result && result.value ? JSON.parse(result.value) : [];
+    } catch (e) {
+      tasks = [];
+    }
+    ready = true;
+    setStatus('', 0);
+    render();
+  }
+
+  async function save() {
+    try {
+      const result = await window.storage.set(STORAGE_KEY, JSON.stringify(tasks), false);
+      if (!result) setStatus('⚠️ Could not save changes', 3000);
+    } catch (e) {
+      setStatus('⚠️ Could not save changes', 3000);
+    }
+  }
+
+  function getFormValues() {
+    return {
+      name: document.getElementById('taskInput').value.trim(),
+      date: document.getElementById('dateInput').value,
+      time: document.getElementById('timeInput').value,
+      priority: document.getElementById('priorityInput').value,
+      category: document.getElementById('catInput').value.trim()
+    };
+  }
+
+  function clearForm() {
+    document.getElementById('taskInput').value = '';
+    document.getElementById('catInput').value = '';
+    document.getElementById('dateInput').value = '';
+    document.getElementById('timeInput').value = '';
+    document.getElementById('priorityInput').value = 'Dhexdhexaad';
+  }
+
+  // Single entry point: the form behaves as "Add" normally, or "Update" when a task is loaded into it
+  async function handleSubmit() {
+    if (editingId !== null) {
+      await commitUpdate();
+    } else {
+      await addTask();
+    }
+  }
+
+  async function addTask() {
+    const values = getFormValues();
+    if (!values.name) return;
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    const now = Date.now();
+    tasks.unshift({
+      id: now,
+      name: values.name,
+      date: values.date,
+      time: values.time,
+      priority: values.priority,
+      category: values.category,
+      done: false,
+      createdAt: now,
+      updatedAt: now
+    });
+    clearForm();
+    render();
+    await save();
+    btn.disabled = false;
+  }
+
+  // Loads a task's data into the entry form and switches it into update mode
+  function startEdit(id) {
+    const t = tasks.find(t => t.id === id);
+    if (!t) return;
+    editingId = id;
+    document.getElementById('taskInput').value = t.name;
+    document.getElementById('dateInput').value = t.date || '';
+    document.getElementById('timeInput').value = t.time || '';
+    document.getElementById('priorityInput').value = t.priority;
+    document.getElementById('catInput').value = t.category || '';
+
+    document.getElementById('formCard').classList.add('editing');
+    const btn = document.getElementById('submitBtn');
+    btn.textContent = '✓  Cusboonoysiinta Shaqada';
+    btn.classList.add('update-mode');
+
+    document.getElementById('formCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.getElementById('taskInput').focus();
+    render();
+  }
+
+  function cancelEdit() {
+    editingId = null;
+    clearForm();
+    document.getElementById('formCard').classList.remove('editing');
+    const btn = document.getElementById('submitBtn');
+    btn.textContent = '+ Add Task';
+    btn.classList.remove('update-mode');
+    render();
+  }
+
+  async function commitUpdate() {
+    const t = tasks.find(t => t.id === editingId);
+    if (!t) { cancelEdit(); return; }
+    const values = getFormValues();
+    if (!values.name) return;
+
+    t.name = values.name;
+    t.date = values.date;
+    t.time = values.time;
+    t.priority = values.priority;
+    t.category = values.category;
+    t.updatedAt = Date.now();
+
+    editingId = null;
+    clearForm();
+    document.getElementById('formCard').classList.remove('editing');
+    const btn = document.getElementById('submitBtn');
+    btn.textContent = '+ Add Task';
+    btn.classList.remove('update-mode');
+
+    render();
+    await save();
+    setStatus('✓ Task updated', 1500);
+  }
+
+  async function deleteTask(id) {
+    if (editingId === id) cancelEdit();
+    tasks = tasks.filter(t => t.id !== id);
+    render();
+    await save();
+  }
+
+  async function toggleDone(id) {
+    const t = tasks.find(t => t.id === id);
+    if (t) { t.done = !t.done; t.updatedAt = Date.now(); }
+    render();
+    await save();
+  }
+
+  function setFilter(f, el) {
+    filter = f;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    render();
+  }
+
+  function isOverdue(dateStr, timeStr) {
+    if (!dateStr) return false;
+    const d = new Date(dateStr + 'T' + (timeStr || '00:00'));
+    return d < new Date();
+  }
+
+  function formatTime(timeStr) {
+    if (!timeStr) return '';
+    const [h, m] = timeStr.split(':').map(Number);
+    const period = h >= 12 ? 'PM' : 'AM';
+    const h12 = h % 12 === 0 ? 12 : h % 12;
+    return `${h12}:${String(m).padStart(2, '0')} ${period}`;
+  }
+
+  function timeAgo(ts) {
+    if (!ts) return '';
+    const diff = Math.floor((Date.now() - ts) / 1000);
+    if (diff < 60) return 'just now';
+    if (diff < 3600) return Math.floor(diff / 60) + 'm ago';
+    if (diff < 86400) return Math.floor(diff / 3600) + 'h ago';
+    return Math.floor(diff / 86400) + 'd ago';
+  }
+
+  function render() {
+    const list = document.getElementById('taskList');
+
+    if (!ready) {
+      list.innerHTML = '<div class="empty">Loading…</div>';
+      return;
+    }
+
+    let filtered = tasks;
+    if (filter === 'done') filtered = tasks.filter(t => t.done);
+    else if (filter === 'Bilaaw') filtered = tasks.filter(t => t.priority === 'Dhamaad');
+    else if (filter === 'medium') filtered = tasks.filter(t => t.priority === 'Dhexdhexaad');
+    else if (filter === 'low') filtered = tasks.filter(t => t.priority === 'Bilaaw');
+
+    if (!filtered.length) {
+      list.innerHTML = '<div class="empty">🎉 Wax Shaqo ah Kuuma Keedsano!</div>';
+      return;
+    }
+
+    list.innerHTML = filtered.map(t => `
+      <div class="task p-${t.priority} ${t.done ? 'done' : ''} ${t.id === editingId ? 'being-edited' : ''}">
+        <input type="checkbox" class="task-check" ${t.done ? 'checked' : ''} onchange="toggleDone(${t.id})" />
+        <div class="task-body">
+          <div class="task-name">${t.name}</div>
+          <div class="task-meta">
+            ${t.category ? `<span class="badge badge-cat">🏷️ ${t.category}</span>` : ''}
+            <span class="badge badge-${t.priority}">${t.priority === 'Dhamaad' ? '🔥 Dhamaad' : t.priority === 'Dhexdhexaad' ? '⚡ Dhexdhexaad' :t.priority ==='Bilaaw' ? '🌿 Bilaaw' : ''}</span>
+            ${t.date ? `<span class="badge ${isOverdue(t.date, t.time) && !t.done ? 'badge-overdue' : 'badge-date'}">${isOverdue(t.date, t.time) && !t.done ? '⚠️ Waqtiga' : '📅'} ${t.date}</span>` : ''}
+            ${t.time ? `<span class="badge badge-time">⏰ ${formatTime(t.time)}</span>` : ''}
+            ${t.updatedAt && t.updatedAt !== t.createdAt ? `<span class="badge badge-updated">✏️ updated ${timeAgo(t.updatedAt)}</span>` : ''}
+          </div>
+        </div>
+        <div class="task-actions">
+          <button class="btn-icon btn-edit" onclick="startEdit(${t.id})" title="Update this task">✏️</button>
+          <button class="btn-icon btn-del" onclick="deleteTask(${t.id})" title="Delete">🗑</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  document.getElementById('taskInput').addEventListener('keydown', e => { if (e.key === 'Enter') handleSubmit(); });
+  loadTasks();
+</script>
+</body>
+</html>
